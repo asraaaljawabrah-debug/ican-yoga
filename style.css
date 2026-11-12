@@ -1,0 +1,388 @@
+/* =================================
+   GENERAL SETTINGS
+================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #F5F7F2;
+    color: #354B3C;
+}
+
+/* =================================
+   HEADER
+================================= */
+
+header {
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header h1 {
+    color: #55765D;
+    margin: 0;
+}
+
+nav a {
+    text-decoration: none;
+    color: #354B3C;
+    margin: 10px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #829B80;
+}
+
+/* =================================
+   WELCOME SECTION
+================================= */
+
+.welcome {
+    text-align: center;
+    padding: 50px 20px 70px;
+    background-color: #E6EEE3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcome h2 {
+    font-size: 36px;
+    color: #55765D;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.yoga-image {
+    width: 90%;
+    max-width: 650px;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+    margin: 0 auto 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+.welcome-text {
+    width: 100%;
+    text-align: center;
+}
+
+.welcome-text p {
+    font-size: 18px;
+    text-align: center;
+    margin: 12px 0;
+}
+
+/* Explore button */
+
+.button {
+    display: inline-block;
+    background-color: #66866B;
+    color: white;
+    padding: 14px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.button:hover {
+    background-color: #55765D;
+    transform: translateY(-3px);
+}
+
+/* =================================
+   EXERCISE SECTION
+================================= */
+
+.exercise-section {
+    width: 100%;
+    padding: 45px 20px;
+    text-align: center;
+}
+
+/* Exercise heading container */
+
+.exercise-heading {
+    width: 100%;
+    margin: 0 auto 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Exercise title and lotus icon */
+
+.exercise-heading .exercise-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 18px;
+    margin: 0 0 25px;
+    color: #55765D;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.lotus-icon {
+    width: 55px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+/* Description directly under title */
+
+.exercise-heading .section-description {
+    display: block;
+    width: 100%;
+    margin: 0 0 35px;
+    padding: 0;
+    text-align: center !important;
+    color: #526657;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* Exercise category headings */
+
+.category-title {
+    width: 100%;
+    max-width: 650px;
+    margin: 40px auto 18px;
+    text-align: left;
+    color: #55765D;
+    font-size: 23px;
+}
+
+/* Exercise lists */
+
+.exercise-list {
+    width: 100%;
+}
+
+/* =================================
+   EXERCISE CARDS
+================================= */
+
+.exercise-card {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    width: 100%;
+    max-width: 650px;
+    min-height: 125px;
+    padding: 22px 25px;
+    margin: 18px auto;
+    background-color: #FFFFFF;
+    border: 1px solid #DCE5D8;
+    border-radius: 18px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Cards as buttons */
+
+.exercise-card-button {
+    appearance: none;
+    font-family: Arial, sans-serif;
+    color: #354B3C;
+    cursor: pointer;
+    text-align: left;
+}
+
+.exercise-card-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.exercise-card-button:focus-visible {
+    outline: 3px solid #829B80;
+    outline-offset: 4px;
+}
+
+/* Exercise icons */
+
+.exercise-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 65px;
+    height: 65px;
+    min-width: 65px;
+    flex-shrink: 0;
+    background-color: #F0F5ED;
+    border-radius: 16px;
+    font-size: 34px;
+}
+
+/* Exercise information */
+
+.exercise-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 7px;
+    text-align: left;
+}
+
+/* Exercise name */
+
+.exercise-name {
+    color: #55765D;
+    font-size: 19px;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+/* Exercise duration */
+
+.exercise-duration {
+    color: #66866B;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* Exercise description */
+
+.exercise-description {
+    color: #59665D;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* Arrow */
+
+.exercise-arrow {
+    font-size: 34px;
+    color: #55765D;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* =================================
+   DOWNLOADS SECTION
+================================= */
+
+#downloads {
+    background-color: white;
+    padding: 35px 20px;
+    text-align: center;
+}
+
+/* =================================
+   FOOTER
+================================= */
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #55765D;
+}
+
+/* =================================
+   MOBILE DESIGN
+================================= */
+
+@media (max-width: 600px) {
+
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav a {
+        margin: 5px;
+    }
+
+    .welcome {
+        padding: 35px 15px 50px;
+    }
+
+    .welcome h2 {
+        font-size: 28px;
+    }
+
+    .welcome-text p {
+        font-size: 16px;
+    }
+
+    .yoga-image {
+        width: 100%;
+        height: 250px;
+    }
+
+    .exercise-section {
+        padding: 35px 15px;
+    }
+
+    .exercise-heading {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+    }
+
+    .exercise-heading .exercise-title {
+        width: 100%;
+        justify-content: center;
+        font-size: 29px;
+        gap: 12px;
+    }
+
+    .lotus-icon {
+        width: 45px;
+        height: 40px;
+    }
+
+    .exercise-heading .section-description {
+        width: 100%;
+        margin: 0 auto 30px;
+        text-align: center !important;
+        font-size: 16px;
+    }
+
+    .category-title {
+        font-size: 20px;
+        margin-top: 30px;
+    }
+
+    .exercise-card {
+        gap: 12px;
+        padding: 16px;
+        min-height: 110px;
+    }
+
+    .exercise-icon {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        font-size: 27px;
+    }
+
+    .exercise-name {
+        font-size: 16px;
+    }
+
+    .exercise-duration,
+    .exercise-description {
+        font-size: 13px;
+    }
+
+    .exercise-arrow {
+        font-size: 28px;
+    }
+}
