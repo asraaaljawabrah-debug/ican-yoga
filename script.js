@@ -2,79 +2,79 @@ const exercises = [
     {
         id: 1,
         name: "Styrkeandning",
-        category: "Short Exercises",
+        category: "Korta övningar",
         duration: "2 min",
-        description: "Breathing combined with gentle hand movements."
+        description: "Andning i kombination med mjuka handrörelser."
     },
     {
         id: 2,
         name: "Ankra i kroppen",
-        category: "Short Exercises",
+        category: "Korta övningar",
         duration: "2–3 min",
-        description: "A grounding exercise to feel calm and safe."
+        description: "En grundande övning som hjälper dig att känna lugn och trygghet."
     },
     {
         id: 3,
-        name: "Grounding: Landa i nuet",
-        category: "Short Exercises",
+        name: "Jordning: Landa i nuet",
+        category: "Korta övningar",
         duration: "5 min",
-        description: "A gentle exercise to become aware of your body."
+        description: "En mjuk övning för att bli mer medveten om din kropp."
     },
     {
         id: 4,
         name: "Fysiologisk suck: Längre utandning",
-        category: "Short Exercises",
+        category: "Korta övningar",
         duration: "5–7 min",
-        description: "A breathing exercise with a longer exhalation."
+        description: "En andningsövning med längre utandning."
     },
     {
         id: 5,
-        name: "Coherent Breath: Lugn rytm",
-        category: "Short Exercises",
+        name: "Sammanhängande andning: Lugn rytm",
+        category: "Korta övningar",
         duration: "5–7 min",
-        description: "Slow and rhythmic breathing."
+        description: "Långsam andning i en lugn och jämn rytm."
     },
     {
         id: 6,
         name: "Ansikte, käke, nacke och axlar",
-        category: "Short Exercises",
+        category: "Korta övningar",
         duration: "5 min",
-        description: "Gentle relaxation for the face, neck and shoulders."
+        description: "Mjuk avslappning för ansikte, käke, nacke och axlar."
     },
     {
         id: 7,
         name: "Vila med barnet nära",
-        category: "Short Exercises",
+        category: "Korta övningar",
         duration: "6–8 min",
-        description: "A relaxing exercise with your baby close to you."
+        description: "En avslappnande övning med ditt barn nära dig."
     },
     {
         id: 8,
-        name: "Stress Release: Släpp trycket",
-        category: "Longer Sessions",
+        name: "Stresslindring: Släpp trycket",
+        category: "Längre pass",
         duration: "10–15 min",
-        description: "Gentle movements to release stress and tension."
+        description: "Mjuka rörelser som hjälper dig att släppa stress och spänningar."
     },
     {
         id: 9,
         name: "Öka cirkulationen",
-        category: "Longer Sessions",
+        category: "Längre pass",
         duration: "10–15 min",
-        description: "Gentle movements to improve circulation."
+        description: "Mjuka rörelser som hjälper till att öka blodcirkulationen."
     },
     {
         id: 10,
         name: "Vilopaus under dagen",
-        category: "Longer Sessions",
+        category: "Längre pass",
         duration: "12–15 min",
-        description: "A relaxing break during the day."
+        description: "En avkopplande paus under dagen."
     },
     {
         id: 11,
         name: "Avslappning inför sömn",
-        category: "Longer Sessions",
+        category: "Längre pass",
         duration: "20 min",
-        description: "A guided relaxation before bedtime."
+        description: "En guidad avslappningsövning inför läggdags."
     }
 ];
 
@@ -145,7 +145,7 @@ function renderExercises() {
             selectExercise(exercise.id);
         });
 
-        if (exercise.category === "Short Exercises") {
+        if (exercise.category === "Korta övningar") {
             shortContainer.appendChild(card);
         } else {
             longContainer.appendChild(card);
@@ -164,8 +164,8 @@ function selectExercise(id) {
         return;
     }
 
-    alert("Selected exercise: " + exercise.name +
-          "\nThe video player will be connected later.");
+    alert("Vald övning: " + exercise.name +
+          "\nVideospelaren kopplas in efter att integrationen är klar.");
 }
 
 // Show exercises when the page loads
