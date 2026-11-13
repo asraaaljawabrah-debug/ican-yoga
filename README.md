@@ -13,7 +13,7 @@ För att kunna köra:
 För att starta appen:
 Öppna den nedladdade projektmappen i VS Code och välj Terminal -> New Terminal. Kör dessa kommandon ett i taget:
 1. npm ci
-2. npmc run build
+2. npm run build
 3. npx cap sync android
 4. npx cap open android
 
