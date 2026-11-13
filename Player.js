@@ -35,10 +35,10 @@ const exercises = {
         description: "En andningsövning med längre utandning."
     },
     5: {
-        title: "Coherent Breath: Lugn rytm",
+        title: "Sammanhängande andning: Lugn rytm",
         category: "Korta övningar",
         duration: "5–7 minuter",
-        description: "Lugn och rytmisk andning."
+        description: "Långsam andning i en lugn och jämn rytm."
     },
     6: {
         title: "Ansikte, käke, nacke och axlar",
@@ -53,16 +53,16 @@ const exercises = {
         description: "En avslappnande övning med ditt barn nära dig."
     },
     8: {
-        title: "Stress Release: Släpp trycket",
+        title: "Stresslindring: Släpp trycket",
         category: "Längre pass",
         duration: "10–15 minuter",
-        description: "Mjuka rörelser för att släppa stress och spänningar."
+        description: "Mjuka rörelser som hjälper dig att släppa stress och spänningar."
     },
     9: {
         title: "Öka cirkulationen",
         category: "Längre pass",
         duration: "10–15 minuter",
-        description: "Mjuka rörelser för att förbättra cirkulationen."
+        description: "Mjuka rörelser för att förbättra blodcirkulationen."
     },
     10: {
         title: "Vilopaus under dagen",

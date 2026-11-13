@@ -153,7 +153,7 @@ function renderExercises() {
     });
 }
 
-// Prepare selected exercise for the video player
+// Open the video player for the selected exercise
 function selectExercise(id) {
     const exercise = exercises.find(function(item) {
         return item.id === id;
@@ -164,8 +164,7 @@ function selectExercise(id) {
         return;
     }
 
-    alert("Vald övning: " + exercise.name +
-          "\nVideospelaren kopplas in efter att integrationen är klar.");
+    window.location.href = "Player.html?id=" + id;
 }
 
 // Show exercises when the page loads
