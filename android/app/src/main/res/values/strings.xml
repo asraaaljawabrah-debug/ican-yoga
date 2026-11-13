@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">I CAN Yoga B2</string>
+    <string name="title_activity_main">I CAN Yoga B2</string>
+    <string name="package_name">se.studentgrupp8.icanyoga.b2lab</string>
+    <string name="custom_url_scheme">se.studentgrupp8.icanyoga.b2lab</string>
+</resources>

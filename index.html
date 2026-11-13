@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>I CAN Yoga</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/src/integration/integration.css">
 </head>
 
 <body>
@@ -14,7 +15,7 @@
     <header>
         <h1>🌿 I CAN Yoga</h1>
 
-        <nav>
+        <nav aria-label="Huvudnavigation">
             <a href="#home">Hem</a>
             <a href="#exercises">Övningar</a>
             <a href="#downloads">Nedladdningar</a>
@@ -81,6 +82,8 @@
             </div>
 
 
+            <p id="catalog-status" class="status-message" role="status">Läser övningslistan…</p>
+            <p class="demo-note">Övningarna visar tills vidare samma testfilm.</p>
             <!-- Short Exercises -->
             <h3 class="category-title">
                 🧍 Korta övningar
@@ -108,7 +111,14 @@
 
             <h2>↓ Mina nedladdningar</h2>
 
-            <p>Dina sparade övningar visas här.</p>
+            <p id="downloads-status" class="status-message" role="status">Läser sparade övningar…</p>
+            <div id="download-list" class="exercise-list"></div>
+
+            <div class="offline-test">
+                <h3>Testa offline</h3>
+                <p>Ladda ned testfilmen och prova utan internet.</p>
+                <div id="technical-exercises"></div>
+            </div>
 
         </section>
 
@@ -122,7 +132,7 @@
 
 
     <!-- JavaScript -->
-    <script src="script.js"></script>
+    <script type="module" src="/src/integration/catalog-page.js"></script>
 
 </body>
 </html>

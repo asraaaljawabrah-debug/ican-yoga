@@ -5,11 +5,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <title>I CAN Yoga - Övning</title>
 
     <link rel="stylesheet" href="Player.css">
+    <link rel="stylesheet" href="/src/integration/integration.css">
 </head>
 
 <body>
@@ -20,51 +21,54 @@
 
     <main class="player-page">
 
-        <button class="back-button" id="back-button">
-            ← Tillbaka till övningarna
+        <button type="button" class="back-button" id="back-button">
+            ← Tillbaka
         </button>
 
+        <p id="player-status" class="status-message" role="status">Läser övningen…</p>
         <section class="exercise-info">
 
             <p class="category" id="exercise-category">
-                ANDNING
+                
             </p>
 
             <h2 id="exercise-title">
-                Styrkeandning
+                Övning
             </h2>
 
             <p class="duration" id="exercise-duration">
-                2 minuter
+                
             </p>
 
             <p class="description" id="exercise-description">
-                Andning kombinerad med mjuka handrörelser.
+                
             </p>
 
         </section>
 
         <section class="video-card">
 
-            <video id="exercise-video" controls>
-                <source src="" type="video/mp4">
+            <video id="exercise-video" controls playsinline preload="metadata" crossorigin="anonymous" hidden>
                 Din webbläsare stöder inte videouppspelning.
             </video>
 
-            <div class="subtitle-info">
-                <h3>Undertexter</h3>
-                <p>Svenska undertexter visas här när de finns tillgängliga.</p>
+            <div class="subtitle-info" hidden>
+                <p id="subtitle-status" role="status"></p>
+                <button type="button" id="captions-button" class="secondary-button" aria-pressed="false" hidden>Visa undertexter</button>
             </div>
 
-            <button id="download-button" class="download-button">
-                Ladda ner övningen
-            </button>
+            <p id="source-status" class="status-message"></p>
+            <progress id="download-progress" max="100" aria-label="Nedladdningsförlopp" hidden></progress>
+            <div class="player-actions">
+                <button type="button" id="download-button" class="download-button" disabled>Ladda ned</button>
+                <button type="button" id="remove-button" class="secondary-button" hidden>Ta bort</button>
+            </div>
 
         </section>
 
     </main>
 
-    <script src="Player.js"></script>
+    <script type="module" src="/src/integration/player-page.js"></script>
 
 </body>
 </html>
