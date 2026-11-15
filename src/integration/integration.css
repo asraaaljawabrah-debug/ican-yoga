@@ -1,37 +1,22 @@
-/* Gemensamma tillägg för spelare och nedladdningar. */
-[hidden] { display: none !important; }
-body { padding-bottom: env(safe-area-inset-bottom, 0px); }
-header, header.header { padding-top: max(20px, env(safe-area-inset-top, 0px)); }
-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
-nav a { display: inline-flex; align-items: center; min-height: 44px; }
-button, .button { min-height: 44px; }
-button:disabled { opacity: .6; cursor: default; }
-button:focus-visible, a:focus-visible { outline: 3px solid #354B3C; outline-offset: 3px; }
-.button { background-color: #55765D; }
-.exercise-duration, .duration, .category, .subtitle-info p { color: #4e6252; }
-.status-message, .demo-note { max-width: 650px; margin: 16px auto; line-height: 1.55; color: #354B3C; }
-.status-message:empty, .category:empty { display: none; }
-.demo-note { font-size: 14px; color: #4e6252; }
-.offline-test { max-width: 650px; margin: 28px auto 0; padding-top: 20px; border-top: 1px solid #DCE5D8; text-align: left; }
-.offline-test h3 { margin: 0 0 8px; font-size: 18px; }
-.offline-test p { margin: 0 0 4px; line-height: 1.5; }
-.offline-test a { display: inline-flex; align-items: center; min-height: 44px; color: #354B3C; text-underline-offset: 3px; }
-.offline-test-page .player-page { max-width: 650px; }
-.offline-test-page .video-card { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
-.offline-test-page .exercise-info h2 { font-size: 26px; }
-.player-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
-.player-actions .secondary-button { margin: 0; }
-.secondary-button { background: white; color: #354B3C; border: 1px solid #55765D; border-radius: 10px; padding: 12px 18px; font: inherit; cursor: pointer; margin: 8px 0; }
-.download-item { max-width: 650px; margin: 20px auto; text-align: left; padding-bottom: 12px; border-bottom: 1px solid #DCE5D8; }
-.download-item .exercise-card { margin-bottom: 4px; }
-.video-card { overflow-wrap: anywhere; }
-video { aspect-ratio: 16 / 9; background: #152319; }
-progress { display: block; width: 100%; height: 20px; margin: 16px 0; }
-.player-page .status-message { margin: 16px 0; }
-@media (max-width: 600px) {
-  .exercise-description, .exercise-duration { font-size: 14px; }
-  .secondary-button, .download-button { width: 100%; }
+.length-filter { display: flex; gap: 8px; margin-bottom: 20px; }
+.length-filter button { flex: 1; min-height: 44px; border: 1px solid #bcbcbc; border-radius: 4px; background: #fff; font-size: 14px; }
+.length-filter button[aria-pressed="true"] { background: #e6e6e6; border-color: #555; font-weight: 700; }
+.exercise-group { margin-bottom: 24px; }
+.exercise-group h2 { margin: 0 0 8px; padding: 9px 10px; background: #f0f0f0; font-size: 16px; }
+.exercise-list { display: grid; gap: 8px; }
+.exercise-card {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; min-width: 0; min-height: 76px; padding: 12px;
+  border: 1px solid var(--line); border-radius: 5px; background: #fff;
+  text-align: left; text-decoration: none;
 }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; }
-}
+.exercise-icon { display: flex; align-items: center; justify-content: center; width: 36px; flex-shrink: 0; color: #555; }
+.exercise-icon .icon { width: 32px; height: 32px; }
+.exercise-info { display: grid; flex: 1; gap: 5px; min-width: 0; }
+.exercise-name { font-size: 16px; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.exercise-duration, .exercise-state { color: var(--muted); font-size: 13px; line-height: 1.4; }
+.exercise-arrow { display: inline-flex; color: #555; }
+.exercise-arrow .icon { width: 22px; height: 22px; }
+.download-item { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 5px; }
+.download-item .exercise-card { flex: 1; border: 0; }
+.remove-download { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0; width: 64px; margin: 8px 0; border: 0; border-left: 1px solid var(--line); background: #fff; font-size: 11px; }

@@ -1,75 +1,54 @@
-
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-    <title>I CAN Yoga - Övning</title>
-
-    <link rel="stylesheet" href="Player.css">
-    <link rel="stylesheet" href="/src/integration/integration.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>I CAN Yoga – Övning</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="Player.css">
+  <link rel="stylesheet" href="/src/integration/integration.css">
 </head>
-
 <body>
-
-    <header class="header">
-        <h1>🌿 I CAN Yoga</h1>
+  <div class="app-shell">
+    <header class="app-header player-header">
+      <button type="button" id="back-button" class="back-button" aria-label="Tillbaka till listan"><span data-icon="back" aria-hidden="true"></span></button>
+      <h1>Övning</h1>
+      <span class="app-name">I CAN Yoga</span>
     </header>
-
     <main class="player-page">
-
-        <button type="button" class="back-button" id="back-button">
-            ← Tillbaka
-        </button>
-
-        <p id="player-status" class="status-message" role="status">Läser övningen…</p>
-        <section class="exercise-info">
-
-            <p class="category" id="exercise-category">
-                
-            </p>
-
-            <h2 id="exercise-title">
-                Övning
-            </h2>
-
-            <p class="duration" id="exercise-duration">
-                
-            </p>
-
-            <p class="description" id="exercise-description">
-                
-            </p>
-
-        </section>
-
-        <section class="video-card">
-
-            <video id="exercise-video" controls playsinline preload="metadata" crossorigin="anonymous" hidden>
-                Din webbläsare stöder inte videouppspelning.
-            </video>
-
-            <div class="subtitle-info" hidden>
-                <p id="subtitle-status" role="status"></p>
-                <button type="button" id="captions-button" class="secondary-button" aria-pressed="false" hidden>Visa undertexter</button>
-            </div>
-
-            <p id="source-status" class="status-message"></p>
-            <progress id="download-progress" max="100" aria-label="Nedladdningsförlopp" hidden></progress>
-            <div class="player-actions">
-                <button type="button" id="download-button" class="download-button" disabled>Ladda ned</button>
-                <button type="button" id="remove-button" class="secondary-button" hidden>Ta bort</button>
-            </div>
-
-        </section>
-
+      <p id="player-status" class="status-message" role="status">Läser övningen…</p>
+      <div class="video-frame">
+        <div id="video-placeholder" class="video-placeholder" role="status">Läser filmen…</div>
+        <video id="exercise-video" controls playsinline preload="metadata" crossorigin="anonymous" hidden>Din webbläsare stöder inte videouppspelning.</video>
+      </div>
+      <div class="subtitle-info" hidden>
+        <button type="button" id="captions-button" class="secondary-button" aria-pressed="false" hidden>Visa undertexter</button>
+        <p id="subtitle-status" class="status-message" role="status"></p>
+      </div>
+      <section class="exercise-details" aria-labelledby="exercise-title">
+        <h2 id="exercise-title">Övning</h2>
+        <div class="exercise-meta">
+          <p><span data-icon="clock" aria-hidden="true"></span><span id="exercise-duration"></span></p>
+          <p id="category-row"><span data-icon="tag" aria-hidden="true"></span><span id="exercise-category"></span></p>
+        </div>
+        <p id="exercise-description"></p>
+      </section>
+      <section class="video-actions" aria-label="Spara filmen">
+        <p id="source-status" class="source-status" role="status"></p>
+        <progress id="download-progress" max="100" aria-label="Nedladdningsförlopp" hidden></progress>
+        <div class="player-actions">
+          <button type="button" id="download-button" class="primary-button" disabled><span data-icon="download" aria-hidden="true"></span><span id="download-label">Ladda ned</span></button>
+          <button type="button" id="remove-button" class="secondary-button" hidden><span data-icon="trash" aria-hidden="true"></span><span>Ta bort från telefonen</span></button>
+        </div>
+        <p id="download-hint" class="helper-text"></p>
+      </section>
     </main>
-
-    <script type="module" src="/src/integration/player-page.js"></script>
-
+    <nav class="bottom-nav" aria-label="Huvudnavigation">
+      <a href="index.html#exercises" data-view="exercises" aria-current="page"><span data-icon="list" aria-hidden="true"></span><span>Övningar</span></a>
+      <a href="index.html#downloads" data-view="downloads"><span data-icon="download" aria-hidden="true"></span><span>Nedladdat</span></a>
+    </nav>
+  </div>
+  <script type="module" src="/src/integration/player-page.js"></script>
 </body>
 </html>
-

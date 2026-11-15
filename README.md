@@ -1,22 +1,30 @@
 # I CAN Yoga
 
-Lite instruktioner för hur ni använder och testar appen i windows.
+Prototyp med övningslista, videospelare och nedladdade filmer. Appen öppnar direkt i övningslistan. Den använder fortfarande testinnehåll.
 
+Installera Node.js 24 och öppna projektmappen i VS Code. Kör kommandona i terminalen från mappen där `package.json` ligger.
 
-För att kunna köra:
+Testa gränssnittet i webbläsaren:
 
-1. Installera node.js (senaste)
-2. Installera Android Stuido (senaste)
-3. I android studio välkomstskärm, öppna More Actions -> SDK Manager. Under SDK Platforms, välj Android 16.0, API 36. Under SDK Tools, se till att Android SDK Platform-Tools, Android SDK Build-Tools och Android Emulator är installerade. Klicka Apply och installera.
+```bash
+npm ci
+npm run dev
+```
 
+Öppna adressen som visas i terminalen. Nedladdning till telefonen testas i Android-appen.
 
-För att starta appen:
-Öppna den nedladdade projektmappen i VS Code och välj Terminal -> New Terminal. Kör dessa kommandon ett i taget:
-1. npm ci
-2. npmc run build
-3. npx cap sync android
-4. npx cap open android
+För Android behöver du Android Studio med Android SDK 36. Kör:
 
-Det sista kommandot kommer att öppna projektet i Android Studio. Vänta tills synkroniseringen är färdig (blå bar längst ner) och klicka sedan på den stora gröna run symbolen.
+```bash
+npm run build
+npx cap sync android
+npx cap open android
+```
 
-För att testa nedladdning, skrolla längst ner i video listan.
+Vänta tills Android Studio har synkroniserat projektet. Välj en telefon i Device Manager, eller anslut en Android-telefon med USB-felsökning, och tryck på Run.
+
+Välj Testfilm i övningslistan och tryck på Ladda ned. När filmen är sparad, stäng av internet och öppna den från Nedladdat. Där kan du också ta bort den.
+
+Efter ändringar i koden, kör `npm run build` och `npx cap sync android` igen och starta om appen med Run.
+
+HTML finns i `index.html` och `Player.html`. Gränssnittets JavaScript ligger i `src/integration/` och filhanteringen i `src/services/`.

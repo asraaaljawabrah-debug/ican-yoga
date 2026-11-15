@@ -1,138 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>I CAN Yoga</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="/src/integration/integration.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>I CAN Yoga – Övningar</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/src/integration/integration.css">
 </head>
-
 <body>
-
-    <!-- Header -->
-    <header>
-        <h1>🌿 I CAN Yoga</h1>
-
-        <nav aria-label="Huvudnavigation">
-            <a href="#home">Hem</a>
-            <a href="#exercises">Övningar</a>
-            <a href="#downloads">Nedladdningar</a>
-        </nav>
+  <div class="app-shell">
+    <header class="app-header">
+      <h1 id="view-title" tabindex="-1">Övningar</h1>
+      <span class="app-name">I CAN Yoga</span>
     </header>
-
     <main>
-
-        <!-- Home Section -->
-        <section id="home" class="welcome">
-
-            <img src="images/yoga-home.jpg.jpeg"
-                 alt="Person som utövar yoga"
-                 class="yoga-image">
-
-            <h2>🧘 Hitta ditt lugn</h2>
-
-            <div class="welcome-text">
-                <p>Ta en stund för dig själv.</p>
-                <p>Utforska mjuka yoga- och avslappningsövningar.</p>
-            </div>
-
-            <a href="#exercises" class="button">
-                Utforska övningarna
-            </a>
-
+      <section id="exercises" class="app-view" aria-labelledby="view-title">
+        <p class="demo-note">Testinnehåll. Övningarnas namn och tider är preliminära.</p>
+        <div class="length-filter" role="group" aria-label="Filtrera efter längd">
+          <button type="button" data-length="all" aria-pressed="true">Alla</button>
+          <button type="button" data-length="short" aria-pressed="false">Korta</button>
+          <button type="button" data-length="long" aria-pressed="false">Längre</button>
+        </div>
+        <p id="catalog-status" class="status-message" role="status">Läser övningslistan…</p>
+        <section id="test-group" class="exercise-group" aria-labelledby="test-heading" hidden>
+          <h2 id="test-heading">Testa nedladdning</h2>
+          <div id="technical-exercises" class="exercise-list"></div>
         </section>
-
-
-        <!-- Exercises Section -->
-        <section id="exercises" class="exercise-section">
-
-            <div class="exercise-heading">
-
-                <h2 class="exercise-title">
-
-                    <!-- Lotus Flower Icon -->
-                    <svg class="lotus-icon"
-                         viewBox="0 0 100 70"
-                         xmlns="http://www.w3.org/2000/svg">
-
-                        <g fill="none"
-                           stroke="#55765D"
-                           stroke-width="3"
-                           stroke-linecap="round">
-
-                            <path d="M50 55 Q20 35 20 15 Q45 20 50 55"/>
-                            <path d="M50 55 Q80 35 80 15 Q55 20 50 55"/>
-                            <path d="M50 55 Q35 25 50 5 Q65 25 50 55"/>
-                            <path d="M50 55 Q15 45 5 35 Q30 30 50 55"/>
-                            <path d="M50 55 Q85 45 95 35 Q70 30 50 55"/>
-
-                        </g>
-                    </svg>
-
-                    Våra övningar
-
-                </h2>
-
-                <p class="section-description">
-                    Välj en övning som passar dina behov och ta en stund för att koppla av och må bra.
-                </p>
-
-            </div>
-
-
-            <p id="catalog-status" class="status-message" role="status">Läser övningslistan…</p>
-            <p class="demo-note">Övningarna visar tills vidare samma testfilm.</p>
-            <!-- Short Exercises -->
-            <h3 class="category-title">
-                🧍 Korta övningar
-            </h3>
-
-            <div id="short-exercises" class="exercise-list">
-                <!-- Korta övningar läggs till med JavaScript -->
-            </div>
-
-
-            <!-- Longer Sessions -->
-            <h3 class="category-title">
-                🧘 Längre pass
-            </h3>
-
-            <div id="long-exercises" class="exercise-list">
-                <!-- Längre pass läggs till med JavaScript -->
-            </div>
-
+        <section id="short-group" class="exercise-group" aria-labelledby="short-heading">
+          <h2 id="short-heading">Korta övningar</h2>
+          <div id="short-exercises" class="exercise-list"></div>
         </section>
-
-
-        <!-- Downloads Section -->
-        <section id="downloads">
-
-            <h2>↓ Mina nedladdningar</h2>
-
-            <p id="downloads-status" class="status-message" role="status">Läser sparade övningar…</p>
-            <div id="download-list" class="exercise-list"></div>
-
-            <div class="offline-test">
-                <h3>Testa offline</h3>
-                <p>Ladda ned testfilmen och prova utan internet.</p>
-                <div id="technical-exercises"></div>
-            </div>
-
+        <section id="long-group" class="exercise-group" aria-labelledby="long-heading">
+          <h2 id="long-heading">Längre pass</h2>
+          <div id="long-exercises" class="exercise-list"></div>
         </section>
-
+      </section>
+      <section id="downloads" class="app-view" aria-labelledby="view-title" hidden>
+        <p class="view-intro">Sparade filmer kan spelas utan internet.</p>
+        <p id="downloads-status" class="status-message" role="status">Läser sparade övningar…</p>
+        <div id="download-list" class="exercise-list"></div>
+        <div id="downloads-empty" class="empty-state" hidden>
+          <span data-icon="download" class="empty-icon" aria-hidden="true"></span>
+          <h2>Inga nedladdade filmer</h2>
+          <p>Öppna en film och välj Ladda ned.</p>
+          <a class="secondary-button" href="#exercises">Visa övningar</a>
+        </div>
+      </section>
+      <noscript><p class="status-message">Aktivera JavaScript för att visa övningarna.</p></noscript>
     </main>
-
-
-    <!-- Footer -->
-    <footer>
-        <p>🌿 I CAN Yoga – Ta hand om dig själv.</p>
-    </footer>
-
-
-    <!-- JavaScript -->
-    <script type="module" src="/src/integration/catalog-page.js"></script>
-
+    <nav class="bottom-nav" aria-label="Huvudnavigation">
+      <a href="#exercises" data-view="exercises" aria-current="page"><span data-icon="list" aria-hidden="true"></span><span>Övningar</span></a>
+      <a href="#downloads" data-view="downloads"><span data-icon="download" aria-hidden="true"></span><span>Nedladdat</span></a>
+    </nav>
+  </div>
+  <script type="module" src="/src/integration/catalog-page.js"></script>
 </body>
 </html>

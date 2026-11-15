@@ -1,11 +1,31 @@
 // Gemensam navigering. En länk från Nedladdade identifierar också exakt version.
-export function playerHref(exercise, downloaded = false) {
+export function playerHref(exercise, downloaded = false, returnHash = '') {
   const query = new URLSearchParams({ id: exercise.id });
   if (downloaded) {
     query.set('source', 'download');
     query.set('version', String(exercise.content_version));
   }
+  if (returnHash) query.set('from', returnHash);
   return `Player.html?${query}`;
+}
+
+export function listRoute(hash = '') {
+  const [page, query = ''] = hash.replace(/^#/, '').split('?');
+  const view = page === 'downloads' ? 'downloads' : 'exercises';
+  const requested = new URLSearchParams(query).get('length');
+  const length = ['short', 'long'].includes(requested) ? requested : 'all';
+  return { view, length };
+}
+
+export function listHash(view, length = 'all') {
+  if (view === 'downloads') return '#downloads';
+  return ['short', 'long'].includes(length) ? `#exercises?length=${length}` : '#exercises';
+}
+
+export function returnToList(params) {
+  if (params.get('source') === 'download') return 'index.html#downloads';
+  const route = listRoute(params.get('from') || '#exercises');
+  return `index.html${listHash(route.view, route.length)}`;
 }
 
 export function resolveSelection(params, catalog, downloads) {

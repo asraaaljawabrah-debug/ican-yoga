@@ -3,7 +3,8 @@ import { App } from '@capacitor/app';
 import { library, nativePlatform } from '../services/native-storage.js';
 import { formatDuration } from '../models/exercise.js';
 import { loadCatalog } from './catalog.js';
-import { resolveSelection, resolvePlayback } from './selection.js';
+import { resolveSelection, resolvePlayback, returnToList } from './selection.js';
+import { icon, mountIcons } from './icons.js';
 
 const $ = id => document.getElementById(id);
 const video = $('exercise-video');
@@ -17,14 +18,42 @@ let trackElement = null;
 let captionsVisible = false;
 let localOnly = params.get('source') === 'download';
 
+mountIcons();
+const listLink = document.querySelector('[data-view="exercises"]');
+if (!localOnly) listLink.href = returnToList(params);
+document.querySelectorAll('.bottom-nav a').forEach(link => {
+  const active = link.dataset.view === (localOnly ? 'downloads' : 'exercises');
+  if (active) link.setAttribute('aria-current', 'page');
+  else link.removeAttribute('aria-current');
+  link.addEventListener('click', event => {
+    if (busy) {
+      event.preventDefault();
+      message('Vänta tills filhanteringen är klar.');
+    } else video.pause();
+  });
+});
+
 function message(text) { $('player-status').textContent = text; }
 function updateButtons() {
   $('back-button').disabled = busy;
-  $('download-button').hidden = Boolean(selected?.is_preview);
   $('download-button').disabled = !selected || selected.is_preview || !nativePlatform || !initialized || busy || status === 'ready';
-  $('download-button').textContent = status === 'ready' ? 'Nedladdad' : 'Ladda ned';
+  $('download-label').textContent = busy ? 'Vänta…' : status === 'ready' ? 'Nedladdad' : 'Ladda ned';
   $('remove-button').hidden = !selected || status === 'not-downloaded';
   $('remove-button').disabled = busy;
+  document.querySelectorAll('.bottom-nav a').forEach(link => {
+    if (busy) {
+      link.setAttribute('aria-disabled', 'true');
+      link.setAttribute('tabindex', '-1');
+    } else {
+      link.removeAttribute('aria-disabled');
+      link.removeAttribute('tabindex');
+    }
+  });
+  $('download-hint').textContent = !selected ? '' : selected.is_preview
+    ? 'Prova nedladdning med Testfilm i övningslistan.'
+    : !nativePlatform ? 'Nedladdning testas i mobilappen.'
+    : status === 'ready' ? 'Filmen finns även under Nedladdat.'
+    : 'Spara filmen för att använda den utan internet.';
 }
 function clearPlayer() {
   hasPlayback = false;
@@ -34,6 +63,8 @@ function clearPlayer() {
   trackElement = null;
   video.load();
   video.hidden = true;
+  $('video-placeholder').hidden = false;
+  $('video-placeholder').textContent = 'Filmen visas här.';
   captionsVisible = false;
   $('captions-button').hidden = true;
   $('captions-button').setAttribute('aria-pressed', 'false');
@@ -68,8 +99,9 @@ function showVideo(source, label) {
   hasPlayback = true;
   video.src = source.videoUrl;
   video.hidden = false;
+  $('video-placeholder').hidden = true;
   video.load();
-  $('source-status').textContent = label;
+  $('source-status').replaceChildren(icon(source.offline ? 'check' : selected.is_preview ? 'play' : 'wifi'), document.createTextNode(label));
 }
 async function openSelected() {
   if (selected.is_preview) {
@@ -81,7 +113,7 @@ async function openSelected() {
   }
   const source = await resolvePlayback(library, selected, localOnly);
   showVideo(source, source.offline ? 'Sparad på telefonen' : 'Spelas via internet');
-  message(nativePlatform ? '' : 'Ladda ned i mobilappen.');
+  message('');
 }
 async function perform(job) {
   if (busy) return;
@@ -102,7 +134,7 @@ async function perform(job) {
 function goBack() {
   if (busy) { message('Vänta tills nedladdningen är klar.'); return; }
   clearPlayer();
-  location.href = localOnly ? 'index.html#downloads' : 'index.html#exercises';
+  location.href = returnToList(params);
 }
 $('back-button').addEventListener('click', goBack);
 $('captions-button').addEventListener('click', () => {
@@ -155,9 +187,10 @@ try {
   const catalog = localOnly ? [] : await loadCatalog();
   ({ exercise: selected, localOnly } = resolveSelection(params, catalog, downloads));
   const isTest = selected.id === 'b2-flower';
-  document.body.classList.toggle('offline-test-page', isTest);
   $('exercise-title').textContent = isTest ? 'Testfilm' : selected.title_sv;
+  document.title = `I CAN Yoga – ${$('exercise-title').textContent}`;
   $('exercise-category').textContent = isTest ? '' : selected.category_sv || (selected.session_type === 'short' ? 'Korta övningar' : 'Längre pass');
+  $('category-row').hidden = !$('exercise-category').textContent;
   $('exercise-duration').textContent = selected.is_preview ? `Planerad längd: ${selected.duration_label}` : formatDuration(selected.duration_seconds);
   $('exercise-description').textContent = isTest
     ? 'Ladda ned filmen. Stäng sedan av internet och spela den igen.'
@@ -166,6 +199,7 @@ try {
   await openSelected();
 } catch (error) {
   message(error.message || 'Övningen kunde inte öppnas.');
+  if (!hasPlayback) $('video-placeholder').textContent = 'Filmen kunde inte öppnas.';
   if (!selected) $('exercise-title').textContent = 'Övningen kunde inte öppnas';
 }
 updateButtons();

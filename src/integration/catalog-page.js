@@ -3,21 +3,56 @@ import { App } from '@capacitor/app';
 import { library, nativePlatform } from '../services/native-storage.js';
 import { formatDuration } from '../models/exercise.js';
 import { loadCatalog } from './catalog.js';
-import { playerHref } from './selection.js';
+import { playerHref, listRoute, listHash } from './selection.js';
+import { icon, mountIcons, exerciseIcon } from './icons.js';
 
 const $ = id => document.getElementById(id);
 let busy = false;
-const icons = ['🌬️', '🌿', '🌱', '💨', '🫁', '🧘', '🤱', '🤸', '🌼', '☁️', '🌙'];
+let length = listRoute(location.hash).length;
+let hasTest = false;
+let downloadsLoaded = false;
+let lastView = '';
+
+function applyFilter() {
+  $('short-group').hidden = length === 'long';
+  $('long-group').hidden = length === 'short';
+  $('test-group').hidden = !hasTest || length !== 'all';
+  document.querySelectorAll('[data-length]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.length === length));
+  });
+  document.querySelector('[data-view="exercises"]').href = listHash('exercises', length);
+}
+
+function showView(focus = false) {
+  const route = listRoute(location.hash);
+  if (route.view === 'exercises') length = route.length;
+  $('exercises').hidden = route.view !== 'exercises';
+  $('downloads').hidden = route.view !== 'downloads';
+  $('view-title').textContent = route.view === 'downloads' ? 'Nedladdat' : 'Övningar';
+  document.title = `I CAN Yoga – ${$('view-title').textContent}`;
+  document.querySelectorAll('.bottom-nav a').forEach(link => {
+    if (link.dataset.view === route.view) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  });
+  applyFilter();
+  if (lastView !== route.view) {
+    window.scrollTo(0, 0);
+    if (focus) $('view-title').focus({ preventScroll: true });
+  }
+  lastView = route.view;
+  if (route.view === 'downloads' && downloadsLoaded) {
+    renderDownloads().catch(error => { $('downloads-status').textContent = `Kunde inte läsa sparade filmer: ${error.message}`; });
+  }
+}
 
 function card(exercise, downloaded = false, status = '') {
   const isTest = exercise.id === 'b2-flower';
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = 'exercise-card exercise-card-button';
-  const icon = document.createElement('span');
-  icon.className = 'exercise-icon';
-  icon.setAttribute('aria-hidden', 'true');
-  icon.textContent = exercise.is_preview ? icons[Number(exercise.id.split('-')[1]) - 1] || '🌿' : '▶';
+  button.className = 'exercise-card';
+  const picture = document.createElement('span');
+  picture.className = 'exercise-icon';
+  picture.append(icon(exerciseIcon(exercise)));
   const info = document.createElement('span');
   info.className = 'exercise-info';
   const title = document.createElement('span');
@@ -26,96 +61,123 @@ function card(exercise, downloaded = false, status = '') {
   const duration = document.createElement('span');
   duration.className = 'exercise-duration';
   duration.textContent = exercise.is_preview
-    ? `Planerad längd: ${exercise.duration_label}`
-    : isTest ? formatDuration(exercise.duration_seconds) : `${formatDuration(exercise.duration_seconds)} · ${exercise.category_sv}`;
-  const description = document.createElement('span');
-  description.className = 'exercise-description';
-  description.textContent = isTest ? '' : exercise.description_sv || '';
-  const badge = document.createElement('span');
-  badge.className = 'exercise-description';
-  badge.textContent = downloaded
-    ? status === 'ready' ? 'Sparad på telefonen' : 'Ofullständig – ladda ned igen'
-    : '';
+    ? `${exercise.duration_label} · testinnehåll`
+    : `${formatDuration(exercise.duration_seconds)}${exercise.category_sv ? ` · ${exercise.category_sv}` : ''}`;
   info.append(title, duration);
-  if (description.textContent) info.append(description);
-  if (badge.textContent) info.append(badge);
-  const arrow = document.createElement('span');
-  arrow.className = 'exercise-arrow';
-  arrow.setAttribute('aria-hidden', 'true');
-  arrow.textContent = '›';
-  button.append(icon, info, arrow);
-  button.addEventListener('click', () => { if (!busy) location.href = playerHref(exercise, downloaded); });
+  if (downloaded) {
+    const state = document.createElement('span');
+    state.className = 'exercise-state';
+    state.textContent = status === 'ready' ? 'Sparad på telefonen' : 'Ofullständig – ladda ned igen';
+    info.append(state);
+  }
+  const play = document.createElement('span');
+  play.className = 'exercise-arrow';
+  play.append(icon('play'));
+  button.append(picture, info, play);
+  button.addEventListener('click', () => {
+    if (busy) return;
+    const from = downloaded ? '#downloads' : listHash('exercises', length);
+    location.href = playerHref(exercise, downloaded, from);
+  });
   return button;
 }
 
+let downloadsRender = 0;
 async function renderDownloads() {
-  const container = $('download-list');
-  container.replaceChildren();
+  const rendering = ++downloadsRender;
+  $('downloads-empty').hidden = true;
   if (!nativePlatform) {
-    $('downloads-status').textContent = 'Nedladdning är tillgänglig i mobilappen.';
+    $('download-list').replaceChildren();
+    $('downloads-status').textContent = 'Nedladdning och sparade filmer testas i mobilappen.';
     return;
   }
   const downloads = await library.listDownloads();
+  const statuses = await Promise.all(downloads.map(exercise => library.getStatus(exercise)));
+  if (rendering !== downloadsRender) return;
+  const container = $('download-list');
+  container.replaceChildren();
+  $('downloads-empty').hidden = downloads.length > 0;
   if (!downloads.length) {
-    $('downloads-status').textContent = 'Inga nedladdade filmer ännu.';
+    $('downloads-status').textContent = '';
     return;
   }
-  let ready = 0;
-  for (const exercise of downloads) {
-    const status = await library.getStatus(exercise);
-    if (status === 'ready') ready++;
+  for (const [index, exercise] of downloads.entries()) {
     const wrapper = document.createElement('div');
     wrapper.className = 'download-item';
-    wrapper.append(card(exercise, true, status));
+    wrapper.append(card(exercise, true, statuses[index]));
     const remove = document.createElement('button');
     remove.type = 'button';
-    remove.className = 'secondary-button';
-    remove.textContent = 'Ta bort';
-    remove.setAttribute('aria-label', `Ta bort ${exercise.title_sv}, version ${exercise.content_version}, från telefonen`);
+    remove.className = 'remove-download';
+    remove.append(icon('trash'), document.createTextNode('Ta bort'));
+    const title = exercise.id === 'b2-flower' ? 'Testfilm' : exercise.title_sv;
+    remove.setAttribute('aria-label', `Ta bort ${title} från telefonen`);
     remove.addEventListener('click', async () => {
-      if (busy || !window.confirm(`Ta bort den lokala kopian av ”${exercise.title_sv}”?`)) return;
+      if (busy || !window.confirm(`Ta bort den sparade filmen ”${title}”?`)) return;
       busy = true;
-      document.querySelectorAll('#download-list button').forEach(button => button.disabled = true);
-      try { await library.removeExercise(exercise); await renderDownloads(); }
-      catch (error) { $('downloads-status').textContent = `Kunde inte radera: ${error.message}`; }
-      finally {
+      document.querySelectorAll('#download-list button').forEach(button => { button.disabled = true; });
+      try {
+        await library.removeExercise(exercise);
+        await renderDownloads();
+      } catch (error) {
+        $('downloads-status').textContent = `Kunde inte ta bort filmen: ${error.message}`;
+      } finally {
         busy = false;
-        document.querySelectorAll('#download-list button').forEach(button => button.disabled = false);
+        document.querySelectorAll('#download-list button').forEach(button => { button.disabled = false; });
       }
     });
     wrapper.append(remove);
     container.append(wrapper);
   }
-  const incomplete = downloads.length - ready;
+  const incomplete = statuses.filter(status => status !== 'ready').length;
   $('downloads-status').textContent = incomplete
-    ? `${incomplete} ${incomplete === 1 ? 'film behöver' : 'filmer behöver'} laddas ned igen.`
-    : '';
+    ? `${incomplete} ${incomplete === 1 ? 'film behöver' : 'filmer behöver'} laddas ned igen.` : '';
 }
 
-try {
-  const catalog = await loadCatalog();
-  for (const exercise of catalog) {
-    if (exercise.is_technical) {
-      const link = document.createElement('a');
-      link.href = playerHref(exercise);
-      link.textContent = `Öppna testfilm (${formatDuration(exercise.duration_seconds)})`;
-      $('technical-exercises').append(link);
-      continue;
+async function loadExercises() {
+  try {
+    const catalog = await loadCatalog();
+    for (const exercise of catalog) {
+      const target = exercise.is_technical ? 'technical-exercises'
+        : exercise.session_type === 'short' ? 'short-exercises' : 'long-exercises';
+      $(target).append(card(exercise));
     }
-    const target = exercise.session_type === 'short' ? 'short-exercises' : 'long-exercises';
-    $(target).append(card(exercise));
+    hasTest = catalog.some(exercise => exercise.is_technical);
+    applyFilter();
+    $('catalog-status').textContent = catalog.length ? '' : 'Det finns inga övningar ännu.';
+  } catch (error) {
+    $('catalog-status').textContent = `Kunde inte läsa listan: ${error.message}`;
   }
-  $('catalog-status').textContent = '';
-} catch (error) { $('catalog-status').textContent = `Kunde inte läsa listan: ${error.message}`; }
+}
 
-try { await library.init(); await renderDownloads(); }
-catch (error) { $('downloads-status').textContent = `Kunde inte läsa telefonens bibliotek: ${error.message}`; }
+async function loadDownloads() {
+  try {
+    await library.init();
+    downloadsLoaded = true;
+    await renderDownloads();
+  } catch (error) {
+    $('downloads-status').textContent = `Kunde inte läsa telefonens bibliotek: ${error.message}`;
+  }
+}
+
+mountIcons();
+showView();
+window.addEventListener('hashchange', () => showView(true));
+document.querySelectorAll('[data-length]').forEach(button => {
+  button.addEventListener('click', () => {
+    length = button.dataset.length;
+    history.replaceState(null, '', listHash('exercises', length));
+    applyFilter();
+    window.scrollTo(0, 0);
+  });
+});
+// Den lokala listan ska kunna visas även om en framtida nätkatalog inte svarar.
+loadExercises();
+loadDownloads();
 
 if (nativePlatform && Capacitor.getPlatform() === 'android') {
-  await App.addListener('backButton', () => {
+  App.addListener('backButton', () => {
     if (busy) return;
-    if (location.hash && location.hash !== '#home') {
-      location.hash = '#home';
-    } else { App.minimizeApp(); }
+    if (listRoute(location.hash).view === 'downloads') location.hash = listHash('exercises', length);
+    else App.minimizeApp();
   });
 }
