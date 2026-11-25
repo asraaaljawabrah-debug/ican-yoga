@@ -52,7 +52,7 @@ export async function resolvePlayback(library, exercise, localOnly) {
   if (localOnly && await library.getStatus(exercise) !== 'ready') {
     throw new Error('Den sparade filmen är ofullständig. Gå till Övningar och ladda ned igen.');
   }
-  const playback = await library.getPlayback(exercise);
+  const playback = await library.getPlayback(exercise, localOnly);
   if (localOnly && !playback.offline) throw new Error('Ingen komplett lokal film finns. Ingen nätvideo öppnades.');
   return playback;
 }

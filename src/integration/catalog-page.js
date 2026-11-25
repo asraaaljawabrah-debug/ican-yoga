@@ -1,7 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { library, nativePlatform } from '../services/native-storage.js';
-import { formatDuration } from '../models/exercise.js';
+import { exerciseDuration } from '../models/exercise.js';
 import { loadCatalog } from './catalog.js';
 import { playerHref, listRoute, listHash } from './selection.js';
 import { icon, mountIcons, exerciseIcon } from './icons.js';
@@ -10,17 +10,22 @@ const $ = id => document.getElementById(id);
 let busy = false;
 let length = listRoute(location.hash).length;
 let hasTest = false;
+let totals = null;
+let catalogTask = null;
 let downloadsLoaded = false;
 let lastView = '';
 
 function applyFilter() {
-  $('short-group').hidden = length === 'long';
-  $('long-group').hidden = length === 'short';
+  $('short-group').hidden = length === 'long' || totals?.short === 0;
+  $('long-group').hidden = length === 'short' || totals?.long === 0;
   $('test-group').hidden = !hasTest || length !== 'all';
   document.querySelectorAll('[data-length]').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.length === length));
   });
   document.querySelector('[data-view="exercises"]').href = listHash('exercises', length);
+  if (totals) $('catalog-status').textContent = totals[length] ? ''
+    : length === 'all' ? 'Det finns inga publicerade övningar med film ännu.'
+    : 'Det finns inga publicerade filmer i den här kategorin ännu.';
 }
 
 function showView(focus = false) {
@@ -40,6 +45,7 @@ function showView(focus = false) {
     if (focus) $('view-title').focus({ preventScroll: true });
   }
   lastView = route.view;
+  if (route.view === 'exercises') ensureCatalog();
   if (route.view === 'downloads' && downloadsLoaded) {
     renderDownloads().catch(error => { $('downloads-status').textContent = `Kunde inte läsa sparade filmer: ${error.message}`; });
   }
@@ -60,9 +66,7 @@ function card(exercise, downloaded = false, status = '') {
   title.textContent = isTest ? 'Testfilm' : exercise.title_sv;
   const duration = document.createElement('span');
   duration.className = 'exercise-duration';
-  duration.textContent = exercise.is_preview
-    ? `${exercise.duration_label} · testinnehåll`
-    : `${formatDuration(exercise.duration_seconds)}${exercise.category_sv ? ` · ${exercise.category_sv}` : ''}`;
+  duration.textContent = [exerciseDuration(exercise), exercise.category_sv].filter(Boolean).join(' · ');
   info.append(title, duration);
   if (downloaded) {
     const state = document.createElement('span');
@@ -142,11 +146,22 @@ async function loadExercises() {
       $(target).append(card(exercise));
     }
     hasTest = catalog.some(exercise => exercise.is_technical);
+    totals = { all: catalog.length, short: catalog.filter(x => x.session_type === 'short').length,
+      long: catalog.filter(x => x.session_type === 'long').length };
     applyFilter();
-    $('catalog-status').textContent = catalog.length ? '' : 'Det finns inga övningar ännu.';
   } catch (error) {
     $('catalog-status').textContent = `Kunde inte läsa listan: ${error.message}`;
   }
+}
+
+function ensureCatalog() {
+  if (totals || catalogTask) return;
+  if (navigator.onLine === false) {
+    $('catalog-status').textContent = 'Du är offline. Sparade filmer finns under Nedladdat.';
+    return;
+  }
+  $('catalog-status').textContent = 'Läser övningslistan…';
+  catalogTask = loadExercises().finally(() => { catalogTask = null; });
 }
 
 async function loadDownloads() {
@@ -170,8 +185,7 @@ document.querySelectorAll('[data-length]').forEach(button => {
     window.scrollTo(0, 0);
   });
 });
-// Den lokala listan ska kunna visas även om en framtida nätkatalog inte svarar.
-loadExercises();
+window.addEventListener('online', () => { if (listRoute(location.hash).view === 'exercises') ensureCatalog(); });
 loadDownloads();
 
 if (nativePlatform && Capacitor.getPlatform() === 'android') {

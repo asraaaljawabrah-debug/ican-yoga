@@ -1,18 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { playerHref, resolveSelection, resolvePlayback, returnToList } from '../src/integration/selection.js';
-import { loadCatalog } from '../src/integration/catalog.js';
-
-test('catalog separates eleven unfinished exercises from the real HTTPS download test', async () => {
-  const rows = await loadCatalog();
-  assert.equal(rows.filter(x => x.is_preview).length, 11);
-  assert.equal(rows.filter(x => !x.is_preview).length, 1);
-  assert.equal(new Set(rows.map(x => x.id)).size, rows.length);
-  for (const row of rows.filter(x => x.is_preview)) {
-    assert.equal(row.video_url, null);
-    assert.equal(row.duration_seconds, null);
-  }
-});
 test('saved version can open without a server catalog and is not replaced by a newer version', () => {
   const old = {id: 'example', content_version: 1};
   const current = {id: 'example', content_version: 2};

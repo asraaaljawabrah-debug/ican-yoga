@@ -11,10 +11,12 @@ export function validateCatalog(rows, { demo = false } = {}) {
       throw new Error('Övningarna behöver unika, giltiga ID:n.');
     }
     ids.add(row.id);
+    const fromStorage = row.media_provider === 'supabase';
+    const positiveInt = value => Number.isSafeInteger(value) && value > 0;
     if (!row.title_sv?.trim() || !row.category_sv?.trim() ||
-        !Number.isInteger(row.duration_seconds) || row.duration_seconds <= 0 ||
+        (!positiveInt(row.duration_seconds) && !(fromStorage && row.duration_seconds === null)) ||
         !Number.isInteger(row.content_version) || row.content_version < 1 ||
-        !Number.isSafeInteger(row.video_bytes) || row.video_bytes <= 0) {
+        (!positiveInt(row.video_bytes) && !(fromStorage && row.video_bytes === null))) {
       throw new Error(`Ofullständig information för ${row.id}.`);
     }
     for (const url of [row.video_url, row.subtitle_url].filter(Boolean)) {
@@ -33,4 +35,11 @@ export function formatDuration(seconds) {
   const minutes = Math.floor(seconds / 60);
   const rest = seconds % 60;
   return minutes ? `${minutes} min${rest ? ` ${rest} sek` : ''}` : `${rest} sek`;
+}
+
+export function exerciseDuration(exercise) {
+  if (exercise.is_preview) return 'Planerad längd: ' + exercise.duration_label;
+  if (exercise.film_seconds > 0) return 'Filmlängd: ' + formatDuration(exercise.film_seconds);
+  if (!exercise.duration_seconds) return 'Längd visas i spelaren';
+  return (exercise.media_provider === 'supabase' ? 'Planerat pass: ' : '') + formatDuration(exercise.duration_seconds);
 }

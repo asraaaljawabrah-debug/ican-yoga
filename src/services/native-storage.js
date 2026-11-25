@@ -2,7 +2,8 @@ import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { FileTransfer } from '@capacitor/file-transfer';
 import { Preferences } from '@capacitor/preferences';
-import { OfflineLibrary } from './offline-library.js';
+import { OfflineLibrary, directMedia } from './offline-library.js';
+import { appSupabase } from './supabase.js';
 
 const folder = 'icanyoga-media';
 const directory = Directory.LibraryNoCloud;
@@ -51,6 +52,8 @@ const storage = {
     });
     try {
       await FileTransfer.downloadFile({ url, path: uri, progress: true, connectTimeout: 15000, readTimeout: 30000 });
+    } catch {
+      throw new Error('Filöverföringen avbröts. Kontrollera anslutningen och att det finns ledigt utrymme.');
     } finally { await listener.remove(); }
   }
 };
@@ -65,5 +68,7 @@ const indexStore = {
   async write(records) { await Preferences.set({ key: indexKey, value: JSON.stringify(records) }); }
 };
 
-export const library = new OfflineLibrary(storage, indexStore, native);
+const onlineMedia = (exercise, forDownload) => exercise.media_provider === 'supabase'
+  ? appSupabase().media(exercise, forDownload) : directMedia(exercise);
+export const library = new OfflineLibrary(storage, indexStore, native, onlineMedia);
 export const nativePlatform = native;

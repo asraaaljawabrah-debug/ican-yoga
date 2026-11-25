@@ -1,30 +1,32 @@
 # I CAN Yoga
 
-Prototyp med övningslista, videospelare och nedladdade filmer. Appen öppnar direkt i övningslistan. Den använder fortfarande testinnehåll.
+Övningarna hämtas från `public.exercises` i Supabase. Filmerna ligger i den privata bucketen `exercise-videos`. Nedladdade filmer sparas på telefonen.
 
-Installera Node.js 24 och öppna projektmappen i VS Code. Kör kommandona i terminalen från mappen där `package.json` ligger.
+Använd Node.js 24. Öppna PowerShell i mappen där `package.json` ligger. Första gången:
 
-Testa gränssnittet i webbläsaren:
-
-```bash
+```powershell
 npm ci
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+notepad .env
+```
+
+Fyll i `VITE_SUPABASE_PUBLISHABLE_KEY` med projektets Publishable key från **Settings → API Keys** i Supabase. Adressen står redan i filen. Spara `.env` lokalt; den ignoreras av Git. Använd aldrig en secret- eller service_role-nyckel i appen.
+
+```powershell
+npm run check:supabase
 npm run dev
 ```
 
-Öppna adressen som visas i terminalen. Nedladdning till telefonen testas i Android-appen.
+Kontrollen läser övningslistan och provar att läsa en bit av en befintlig film. Den ändrar inget i Supabase. Öppna sedan adressen Vite visar och välj en övning. Endast publicerade rader med en videosökväg visas. `video_url` och eventuell `subtitle_url` är sökvägar i bucketen, inte signerade länkar.
 
-För Android behöver du Android Studio med Android SDK 36. Kör:
+För att testa nedladdning, använd Android Studio med Android SDK 36:
 
-```bash
+```powershell
 npm run build
 npx cap sync android
 npx cap open android
 ```
 
-Vänta tills Android Studio har synkroniserat projektet. Välj en telefon i Device Manager, eller anslut en Android-telefon med USB-felsökning, och tryck på Run.
+Vänta på Gradle-synkroniseringen. Välj en emulator eller ansluten telefon och tryck på Run. Spela en film, välj **Ladda ned** och vänta på beskedet att den har sparats. Stäng av Wi-Fi och mobildata, stäng appen helt och öppna filmen igen under **Nedladdat**.
 
-Välj Testfilm i övningslistan och tryck på Ladda ned. När filmen är sparad, stäng av internet och öppna den från Nedladdat. Där kan du också ta bort den.
-
-Efter ändringar i koden, kör `npm run build` och `npx cap sync android` igen och starta om appen med Run.
-
-HTML finns i `index.html` och `Player.html`. Gränssnittets JavaScript ligger i `src/integration/` och filhanteringen i `src/services/`.
+Kör bygg- och synkkommandona igen efter ändringar i kod eller `.env`. Lokala tester körs med `npm test` och behöver ingen nyckel.

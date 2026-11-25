@@ -1,7 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { library, nativePlatform } from '../services/native-storage.js';
-import { formatDuration } from '../models/exercise.js';
+import { exerciseDuration } from '../models/exercise.js';
 import { loadCatalog } from './catalog.js';
 import { resolveSelection, resolvePlayback, returnToList } from './selection.js';
 import { icon, mountIcons } from './icons.js';
@@ -169,8 +169,15 @@ $('remove-button').addEventListener('click', () => {
     message('Filmen är borttagen från telefonen.');
   });
 });
+video.addEventListener('contextmenu', event => event.preventDefault());
+video.addEventListener('loadedmetadata', () => {
+  if (hasPlayback && selected?.media_provider === 'supabase' && Number.isFinite(video.duration) && video.duration > 0) {
+    selected.film_seconds = Math.max(1, Math.round(video.duration));
+    $('exercise-duration').textContent = exerciseDuration(selected);
+  }
+});
 video.addEventListener('error', () => {
-  if (hasPlayback) message(`Filmen kunde inte spelas (fel ${video.error?.code ?? 'okänt'}). Kontrollera anslutningen eller hämta den lokala kopian igen.`);
+  if (hasPlayback) message(`Filmen kunde inte spelas (fel ${video.error?.code ?? 'okänt'}). Kontrollera anslutningen och öppna övningen igen. För en skadad lokal kopia: ta bort filmen och ladda ned igen.`);
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); });
 window.addEventListener('pagehide', () => video.pause());
@@ -191,7 +198,7 @@ try {
   document.title = `I CAN Yoga – ${$('exercise-title').textContent}`;
   $('exercise-category').textContent = isTest ? '' : selected.category_sv || (selected.session_type === 'short' ? 'Korta övningar' : 'Längre pass');
   $('category-row').hidden = !$('exercise-category').textContent;
-  $('exercise-duration').textContent = selected.is_preview ? `Planerad längd: ${selected.duration_label}` : formatDuration(selected.duration_seconds);
+  $('exercise-duration').textContent = exerciseDuration(selected);
   $('exercise-description').textContent = isTest
     ? 'Ladda ned filmen. Stäng sedan av internet och spela den igen.'
     : selected.description_sv || '';
