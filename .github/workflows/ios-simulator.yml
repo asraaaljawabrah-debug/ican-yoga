@@ -1,0 +1,52 @@
+name: iOS-simulator
+
+on:
+  push:
+    tags: ['ios-test-*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+
+      - name: Bygg den gemensamma appkoden
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          node --input-type=module -e "import {createSupabase} from './src/services/supabase.js'; createSupabase({url: process.env.VITE_SUPABASE_URL, key: process.env.VITE_SUPABASE_PUBLISHABLE_KEY});"
+          npm run build
+          npx cap sync ios
+
+      - name: Bygg för iPhone-simulator
+        run: |
+          xcodebuild -quiet -project ios/App/App.xcodeproj -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/ican-ios" ARCHS=arm64 CODE_SIGN_IDENTITY=- build
+          app="$RUNNER_TEMP/ican-ios/Build/Products/Debug-iphonesimulator/App.app"
+          test -f "$app/PrivacyInfo.xcprivacy"
+          test -f "$app/public/Player.html"
+          ditto -c -k --norsrc --keepParent "$app" "$RUNNER_TEMP/I-CAN-Yoga-simulator.zip"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: ${{ runner.temp }}/I-CAN-Yoga-simulator.zip
+          archive: false
+          if-no-files-found: error
+          retention-days: 3
